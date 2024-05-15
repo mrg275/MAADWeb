@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reveal Text Example</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            font-family: 'Century Schoolbook', serif;
+            background-color: #eef1f5;
+            margin: 0;
+            overflow: auto; /* Allows scrolling if content is taller than the viewport */
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            margin: 10px 0; /* Only vertical margin */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 300px; /* Adjust width as needed */
+        }
+        .hidden-text {
+            display: none;
+            margin-top: 20px;
+            border: 2px solid #007BFF;
+            padding: 10px;
+            background-color: #f9f9f9;
+            color: #333;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="text"], input[type="tel"] {
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Please enter your details</h2>
+    <input type="text" id="firstName" placeholder="First Name" required>
+    <input type="tel" id="phoneNumber" placeholder="Phone Number" required>
+    <button onclick="startProcess()">Start</button>
+</div>
+
+<div class="container" style="display: none;" id="textContainer1">
+    <button onclick="revealText(1, 2)">Begin</button>
+    <div id="text1" class="hidden-text">
+        Think of a number 2 through 10.
+    </div>
+</div>
+
+<div class="container" style="display: none;" id="textContainer2">
+    <button onclick="revealText(2, 3)">Next</button>
+    <div id="text2" class="hidden-text">
+        Multiply your number by 9.
+    </div>
+</div>
+
+<div class="container" style="display: none;" id="textContainer3">
+    <button onclick="revealText(3, 4)">Next</button>
+    <div id="text3" class="hidden-text">
+        Add the two integers together.
+    </div>
+</div>
+
+<div class="container" style="display: none;" id="textContainer4">
+    <button onclick="revealText(4, 5)">Next</button>
+    <div id="text4" class="hidden-text">
+        Now subtract those two integers by 2.
+    </div>
+</div>
+
+<div class="container" style="display: none;" id="textContainer5">
+    <button onclick="revealText(5, 6)">Next</button>
+    <div id="text5" class="hidden-text">
+        Think of a state in the US that starts with the letter of the alphabet that your number corresponds to. 1 is A, 2 is B, 3 is C, etc.
+    </div>
+</div>
+
+<div class="container" style="display: none;" id="textContainer6">
+    <button onclick="revealText(6, 7)">Next</button>
+    <div id="text6" class="hidden-text">
+        Think of an animal whose name begins with the 2nd letter of the state.
+    </div>
+</div>
+
+<div class="container" style="display: none;" id="textContainer7">
+    <button onclick="revealText(7, 8)">Next</button>
+    <div id="text7" class="hidden-text">
+        Think of what the color is of that animal.
+    </div>
+</div>
+
+<div class="container" style="display: none;" id="textContainer8">
+    <button onclick="sendSMS()">Next</button>
+    <div id="text8" class="hidden-text">
+        Now look at your phone
+    </div>
+</div>
+
+<script>
+    function revealText(current, next) {
+        document.getElementById('text' + current).style.display = 'block'; // Show the hidden text of the current container
+        if (next <= 8) {
+            document.getElementById('textContainer' + next).style.display = 'block'; // Prepare the next container
+        }
+    }
+
+    function startProcess() {
+        var firstName = document.getElementById('firstName').value;
+        var phoneNumber = document.getElementById('phoneNumber').value;
+        if (firstName !== "" && phoneNumber !== "") {
+            console.log("First Name: " + firstName); // For demonstration, it logs to the console
+            console.log("Phone Number: " + phoneNumber); // For demonstration, it logs to the console
+            document.getElementById('textContainer1').style.display = 'block'; // Reveals the first container
+        } else {
+            alert('Please fill in all fields.');
+        }
+    }
+
+    function sendSMS() {
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const message = document.getElementById('firstName').value;
+
+        fetch('http://localhost:3000/send-sms', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ to: phoneNumber, message: message }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.text();
+        })
+        .then(data => alert(data))
+        .catch(error => alert('Error: ' + error.message));
+    }
+</script>
+
+</body>
+</html>
